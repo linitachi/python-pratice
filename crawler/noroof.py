@@ -20,6 +20,7 @@ def current_page_info(soup):
 
     for i in range(len(name)):
         print(name[i], '價格為:', price[i])
+    return name, price
 
 
 def WriteInExcel(filename, name, price):
@@ -37,8 +38,8 @@ driver = webdriver.Chrome(chrome_path)
 
 url = 'https://find.ruten.com.tw/c/002100010003?sort=new%2Fdc'
 
-times = 3  # 跑幾個頁面
-
+times = 1  # 跑幾個頁面
+page = 2  # 代表第幾頁
 
 for i in range(times):
     # 開啟網頁
@@ -47,8 +48,11 @@ for i in range(times):
     html = driver.page_source
     # 分析當前頁面的資訊
     soup = BeautifulSoup(html, 'html.parser')
-    current_page_info(soup)
+    name, price = current_page_info(soup)
+    #WriteInExcel('test.csv', name.text, price.text)
     # 找出下一頁的網址
-    soup.find('下一頁網址')
-    url = '下一頁網址'
+    url = 'https://find.ruten.com.tw/c/002100010003?p=' + \
+        str(page)+'&sort=new%2Fdc'
+    page += 1
+
 # driver.close()
