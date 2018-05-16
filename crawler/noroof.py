@@ -18,16 +18,24 @@ def current_page_info(soup):
             price.append(price_box.text)
         # print(len(price), len(name)) 因為有廣告所以價格比商品名多
 
-    for i in range(len(name)):
-        print(name[i], '價格為:', price[i])
+    #for i in range(len(name)):
+        #print(name[i], '價格為:', price[i])
+       
     return name, price
 
 
 def WriteInExcel(filename, name, price):
-    with open(filename, 'a') as csv_file:
+    with open(filename, 'a',newline='') as csv_file: #寫入不會有空行newline=''
         writer = csv.writer(csv_file)
         for i in range(len(name)):
-            writer.writerow([name[i], price[i]])
+            #name[i]=name[i].encode("utf8")
+            #name[i]=name[i].decode("cp950", "ignore")
+            try:
+                writer.writerow([name[i], price[i]])
+            except Exception: #因為無法解決編碼問題，因此把有特殊字元的狀況 丟出例外。
+                name[i]=name[i].encode("utf8")
+                name[i]=name[i].decode("cp950", "ignore")
+                writer.writerow([name[i], price[i]])
     return 1
 
 
@@ -49,10 +57,10 @@ for i in range(times):
     # 分析當前頁面的資訊
     soup = BeautifulSoup(html, 'html.parser')
     name, price = current_page_info(soup)
-    #WriteInExcel('test.csv', name.text, price.text)
+    WriteInExcel('test.csv', name, price)
     # 找出下一頁的網址
     url = 'https://find.ruten.com.tw/c/002100010003?p=' + \
         str(page)+'&sort=new%2Fdc'
     page += 1
 
-# driver.close()
+#driver.close()
