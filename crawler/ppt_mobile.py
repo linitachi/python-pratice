@@ -165,6 +165,7 @@ def Content_data22(url):
 
 
 if __name__ == '__main__':
+    print('done')
     current_page = get_web_page(
         'https://www.ptt.cc/bbs/mobilesales/index.html')
     if current_page:

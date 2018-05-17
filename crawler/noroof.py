@@ -5,7 +5,7 @@ import csv
 from datetime import datetime
 from selenium import webdriver
 import sys
-
+import re
 
 def current_page_info(soup):
     name = []
@@ -65,6 +65,18 @@ def Added_time(SourcePage):#SourcePage:list
         time.append(soup.find('li','upload-time').text)
     return time
 
+def SpecificItem(key,title,price,SourcePage): #只留下輸入的關鍵字
+    j=0
+    while(1):
+        if(re.findall(key,title[j]) == []):
+            del title[j]
+            del price[j]
+            del SourcePage[j]
+            j-=1
+        j+=1
+        if(j==len(title)):
+            break
+
 # chromedriver.exe執行檔所存在的路徑
 chrome_path = "C:\selenium_driver_chrome\chromedriver.exe"
 
@@ -72,8 +84,8 @@ driver = webdriver.Chrome(chrome_path)
 
 url = 'https://find.ruten.com.tw/c/002100010003?sort=new%2Fdc'
 
-times = 1  # 跑幾個頁面
-page = 1  # 代表第幾頁
+times = 5  # 跑幾個頁面
+page = 2  # 代表第幾頁 固定從2開始
 
 for i in range(times):
     # 開啟網頁
@@ -83,12 +95,14 @@ for i in range(times):
     # 分析當前頁面的資訊
     soup = BeautifulSoup(html, 'html.parser')
     name, price,SourcePage = current_page_info(soup)
-    #WriteInExcel_noAddedtime('test.csv', name, price,SourcePage)
-    WriteInExcel('test.csv', name, price,SourcePage,Added_time(SourcePage))
+
+    SpecificItem('xzp',name, price,SourcePage)
+    WriteInExcel_noAddedtime('test.csv', name, price,SourcePage)
+    #WriteInExcel('test.csv', name, price,SourcePage,Added_time(SourcePage))
     # 找出下一頁的網址
     url = 'https://find.ruten.com.tw/c/002100010003?p=' + \
         str(page)+'&sort=new%2Fdc'
-    print('第%s頁done'%page)
+    print('第%s頁done 時間:%s'%(page-1,datetime.now() ) )
     page += 1
    
 
