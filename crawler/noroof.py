@@ -30,6 +30,8 @@ def WriteInExcel(filename, name, price,SourcePage,Addedtime):
         writer = csv.writer(csv_file)
         for i in range(len(name)):
             try:
+                Addedtime[i]=Addedtime[i].encode("utf8")
+                Addedtime[i]=Addedtime[i].decode("cp950", "ignore")
                 writer.writerow([name[i], price[i],SourcePage[i],Addedtime[i]])
             except Exception: #因為無法解決編碼問題，因此把有特殊字元的狀況 丟出例外。
                 name[i]=name[i].encode("utf8")
@@ -38,6 +40,19 @@ def WriteInExcel(filename, name, price,SourcePage,Addedtime):
                 Addedtime[i]=Addedtime[i].decode("cp950", "ignore")
                 writer.writerow([name[i], price[i],SourcePage[i],Addedtime[i]])
     return 1
+
+def WriteInExcel_noAddedtime(filename, name, price,SourcePage):
+    with open(filename, 'a',newline='') as csv_file: #寫入不會有空行newline=''
+        writer = csv.writer(csv_file)
+        for i in range(len(name)):
+            try:
+                writer.writerow([name[i], price[i],SourcePage[i]])
+            except Exception: #因為無法解決編碼問題，因此把有特殊字元的狀況 丟出例外。
+                name[i]=name[i].encode("utf8")
+                name[i]=name[i].decode("cp950", "ignore")
+                writer.writerow([name[i], price[i],SourcePage[i]])
+    return 1
+
 
 def Added_time(SourcePage):#SourcePage:list
     time=[]
@@ -58,8 +73,8 @@ driver = webdriver.Chrome(chrome_path)
 url = 'https://find.ruten.com.tw/c/002100010003?sort=new%2Fdc'
 
 times = 1  # 跑幾個頁面
-page = 2  # 代表第幾頁
-ewww=[]
+page = 1  # 代表第幾頁
+
 for i in range(times):
     # 開啟網頁
     driver.get(url)
@@ -68,10 +83,13 @@ for i in range(times):
     # 分析當前頁面的資訊
     soup = BeautifulSoup(html, 'html.parser')
     name, price,SourcePage = current_page_info(soup)
+    #WriteInExcel_noAddedtime('test.csv', name, price,SourcePage)
     WriteInExcel('test.csv', name, price,SourcePage,Added_time(SourcePage))
     # 找出下一頁的網址
     url = 'https://find.ruten.com.tw/c/002100010003?p=' + \
         str(page)+'&sort=new%2Fdc'
+    print('第%s頁done'%page)
     page += 1
+   
 
 #driver.close()
