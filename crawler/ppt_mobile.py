@@ -118,7 +118,7 @@ def Content_data(url, Keywords): #可以查找固定品牌
 
     data = [[author, date, title.lower(), price,url]]
 # 這裡要注意一下存的格()  []
-    with open('index.csv', 'a',,newline='') as csv_file:
+    with open('index.csv', 'a',newline='') as csv_file:
         writer = csv.writer(csv_file)
         writer.writerow(['標題', '價格', '發文日期', '作者', '爬的時間','網址'])
         for author, date, title, price,url in data:
@@ -156,7 +156,7 @@ def Content_data22(url):
         data = [[author, date, title.lower(), price,url]]
     else:
         return 0
-    with open('index.csv', 'a',,newline='') as csv_file:
+    with open('index.csv', 'a',newline='') as csv_file:
         writer = csv.writer(csv_file)
         writer.writerow(['標題', '價格', '發文日期', '作者', '爬的時間','網址'])
         for author, date, title, price,url in data:
