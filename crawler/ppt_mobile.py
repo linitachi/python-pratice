@@ -88,7 +88,7 @@ def save(img_urls, title):
             print(e)
 
 
-def Content_data(url, Keywords):
+def Content_data(url, Keywords): #可以查找固定品牌
     req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
     page = urlopen(req).read()
     soup = BeautifulSoup(page, "html.parser")
@@ -116,13 +116,13 @@ def Content_data(url, Keywords):
     date = metas[2].select('span.article-meta-value')[0].string
     price = contentt[number_start+5:number_end]
 
-    data = [[author, date, title.lower(), price]]
+    data = [[author, date, title.lower(), price,url]]
 # 這裡要注意一下存的格()  []
-    with open('index.csv', 'a') as csv_file:
+    with open('index.csv', 'a',,newline='') as csv_file:
         writer = csv.writer(csv_file)
-        writer.writerow(['標題', '價格', '發文日期', '作者', '爬的時間'])
-        for author, date, title, price in data:
-            writer.writerow([title, price, date, author, datetime.now()])
+        writer.writerow(['標題', '價格', '發文日期', '作者', '爬的時間','網址'])
+        for author, date, title, price,url in data:
+            writer.writerow([title, price, date, author, datetime.now(),url])
     return 1
 
 
@@ -153,14 +153,14 @@ def Content_data22(url):
     data = [[author, date, title.lower(), price]]
 # 這裡要注意一下存的格()  []
     if(price != ''):
-        data = [[author, date, title.lower(), price]]
+        data = [[author, date, title.lower(), price,url]]
     else:
         return 0
-    with open('index.csv', 'a') as csv_file:
+    with open('index.csv', 'a',,newline='') as csv_file:
         writer = csv.writer(csv_file)
-        writer.writerow(['標題', '價格', '發文日期', '作者', '爬的時間'])
-        for author, date, title, price in data:
-            writer.writerow([title, price, date, author, datetime.now()])
+        writer.writerow(['標題', '價格', '發文日期', '作者', '爬的時間','網址'])
+        for author, date, title, price,url in data:
+            writer.writerow([title, price, date, author, datetime.now(),url])
         return 1
 
 
