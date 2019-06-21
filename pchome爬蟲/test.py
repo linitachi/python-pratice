@@ -13,7 +13,8 @@ class Pchome():
         # self.driver.get(
         #     "https://24h.pchome.com.tw/prod/DSAB04-A9008GEKP")
         self.driver.get(
-            "https://ecshweb.pchome.com.tw/search/v3.3/?q=%E7%98%8B%E6%AE%BA%E7%89%B9%E8%B3%A3")
+            "https://ecshweb.pchome.com.tw/search/v3.3/?q=%E7%98%8B%E6%AE%BA%E7%89%B9%E8%B3%A3"
+        )
 
     def Search(self):
         self.driver.find_element_by_id("keyword").send_keys("瘋殺特賣")
@@ -24,17 +25,18 @@ class Pchome():
             # 滾動頁面，讓全部商品顯現
             self.driver.execute_script(
                 "window.scrollTo(0,document.body.scrollHeight);")
-        for link in self.driver.find_elements_by_xpath('//*[@class="prod_name"]/a'):
+        for link in self.driver.find_elements_by_xpath(
+                '//*[@class="prod_name"]/a'):
             # print(link.get_attribute('href')) #印出商品網址
-            print(link.text)
+            print("商品名稱:", link.text)
             item_driver = webdriver.Chrome(self.chrome_path)
             item_driver.get(link.get_attribute('href'))
             time.sleep(1)
             Buy, price, Spread = self.Decisionprice(item_driver)
-            print(Buy, "=============")
+            print("是否要購買:", Buy)
             if Buy:
-                WriteInExcel("nice.csv", link.text,
-                             link.get_attribute('href'), price, Spread)
+                WriteInExcel("nice.csv", link.text, link.get_attribute('href'),
+                             price, Spread)
                 # a = self.driver.find_elements_by_class_name("prod_name")
 
     def Decisionprice(self, item_driver):
@@ -52,21 +54,19 @@ class Pchome():
             return False, 0, 0
 
         if string == "網路價":
-            originprice = self.getPrice(Slogan, Slogan.find("網路價")+4)
-            currentprice = self.getPrice(Slogan, Slogan.find("限時價")+5)
+            originprice = self.getPrice(Slogan, Slogan.find("網路價") + 4)
+            currentprice = self.getPrice(Slogan, Slogan.find("限時價") + 5)
         elif string == "原價$":
-            originprice = self.getPrice(
-                Slogan, Slogan.find("原價$")+3)
-            currentprice = self.getPrice(
-                Slogan, Slogan.find("好物推薦價")+6)
-        print(originprice)
-        print(currentprice)
+            originprice = self.getPrice(Slogan, Slogan.find("原價$") + 3)
+            currentprice = self.getPrice(Slogan, Slogan.find("好物推薦價") + 6)
+        print("originprice:", originprice)
+        print("currentprice:", currentprice)
         # 想買的價格
         item_driver.quit()
-        if originprice-currentprice >= 1000 and originprice < 4000:
-            return True, currentprice, originprice-currentprice
-        if originprice-currentprice > 3000:
-            return True, currentprice, originprice-currentprice
+        if originprice - currentprice >= 1000 and originprice < 4000:
+            return True, currentprice, originprice - currentprice
+        if originprice - currentprice > 3000:
+            return True, currentprice, originprice - currentprice
         return False, 0, 0
 
     def getPrice(self, str, pos):
@@ -75,11 +75,11 @@ class Pchome():
         for i in range(len(str)):
             # 判斷是否為數字 如果不是直接跳出 ex:網路價$13900． 限時價↘$7988
             try:
-                tem.append(float(str[pos+i]))
+                tem.append(float(str[pos + i]))
             except ValueError:
                 break
         for i in range(len(tem)):
-            price = price + tem[-1-i] * (10 ** i)
+            price = price + tem[-1 - i] * (10**i)
         return price
 
 
